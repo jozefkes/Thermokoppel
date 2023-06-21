@@ -1,0 +1,47 @@
+#include <LiquidCrystal_I2C.h>
+
+const int ledPin1 = 8;        // Pin voor de eerste LED
+const int ledPin2 = 9;        // Pin voor de tweede LED
+const int voltagePin = A0;    // Pin voor het meten van het voltage
+
+LiquidCrystal_I2C lcd(0x27, 20, 4);  // Het LCD-object initialiseren met het juiste adres en het aantal kolommen en rijen
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(voltagePin, INPUT);
+  
+  digitalWrite(ledPin1, LOW);
+  digitalWrite(ledPin2, LOW);
+  
+lcd.init();
+lcd.backlight();
+lcd.setCursor(1, 0);
+}
+
+void loop() {
+  float voltage = analogRead(voltagePin) * (5.0);  // Voltage meten op de analoge pin en omrekenen naar een waarde tussen 0 en 5V
+  
+  lcd.setCursor(0, 0);
+  lcd.print("Voltage: ");
+
+
+  lcd.setCursor(9, 0);  // De positie van de cursor instellen op het LCD om de voltagewaarde weer te geven
+  lcd.print(voltage, 1);  // De voltage met 2 decimalen weergeven op het LCD-scherm
+
+  lcd.setCursor(14, 0);
+  lcd.print("mV");
+  
+  if (voltage == 0) {
+    digitalWrite(ledPin1, HIGH);  // Eerste LED aanzetten
+    digitalWrite(ledPin2, LOW);   // Tweede LED uitzetten
+  }
+  else if (voltage > 0) {
+    digitalWrite(ledPin1, LOW);    // Eerste LED uitzetten
+    digitalWrite(ledPin2, HIGH);   // Tweede LED aanzetten
+  }
+  
+  delay(1000);  // Wachten voor 1 seconde
+}
